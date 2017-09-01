@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Colourfy.iml" filepath="$PROJECT_DIR$/Colourfy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ColourFy.iml" filepath="$PROJECT_DIR$/ColourFy.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
