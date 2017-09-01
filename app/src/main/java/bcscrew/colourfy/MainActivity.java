@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import bcscrew.colourfy.R;
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.FotoapparatSwitcher;
 import io.fotoapparat.error.CameraErrorCallback;
@@ -51,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
     private Fotoapparat backFotoapparat;
     private PhotoResult photoResult;
 
+    /*
+    start app with cameraView as main activity,
+    initialize Fotoapparat (easy pictures)
+    enable focusing on touch of cameraView,
+    enable taking pictures and hiding pictures (not visible)
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,38 +80,13 @@ public class MainActivity extends AppCompatActivity {
         hidePictureOnClick();
     }
 
+    // initialize Fotoapparat, call constructor
     private void setupFotoapparat() {
         backFotoapparat = createFotoapparat(LensPosition.BACK);
         fotoapparatSwitcher = FotoapparatSwitcher.withDefault(backFotoapparat);
     }
 
-
-    private void takePictureOnClick() {
-        takePictureButton = findViewById(R.id.takePicture);
-        takePictureButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takePicture();
-                takePictureButton.setVisibility(View.GONE);
-                cameraView.setVisibility(View.GONE);
-                hidePictureButton.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-    private void hidePictureOnClick() {
-        hidePictureButton.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hidePicture();
-                hidePictureButton.setVisibility(View.GONE);
-                cameraView.setVisibility(View.VISIBLE);
-                takePictureButton.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
-
+    // Fotoapparat constructor
     private Fotoapparat createFotoapparat(LensPosition position) {
         return Fotoapparat
                 .with(this)
@@ -132,6 +112,24 @@ public class MainActivity extends AppCompatActivity {
                 .build();
     }
 
+    /*
+    Initialize hidePictureButton and call hide picture,
+    set visibility of hidePictureButton to gone,
+    set visibility of takePictureButton to visible
+     */
+    private void hidePictureOnClick() {
+        hidePictureButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hidePicture();
+                hidePictureButton.setVisibility(View.GONE);
+                cameraView.setVisibility(View.VISIBLE);
+                takePictureButton.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    // remove resultView (bitmap) and textView (colour name)
     private void hidePicture() {
         ImageView imageView = (ImageView) findViewById(R.id.result);
         if (imageView.getDrawable() != null) {
@@ -140,6 +138,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    Initialize takePictureButton and call take picture,
+    set visibility of takePictureButton to gone,
+    set visibility of hidePictureButton to visible
+     */
+    private void takePictureOnClick() {
+        takePictureButton = findViewById(R.id.takePicture);
+        takePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePicture();
+                takePictureButton.setVisibility(View.GONE);
+                cameraView.setVisibility(View.GONE);
+                hidePictureButton.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    /*
+    Take and save photo to path, when photo has been saved
+    convert to bitmap and rotate to fit screen properly,
+    call colourOnTouch with rotated bitmap
+     */
     private void takePicture() {
         photoResult = fotoapparatSwitcher.getCurrentFotoapparat().takePicture();
         final File path = new File(getExternalFilesDir("photos"),"photo.jpg");
@@ -162,11 +183,11 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    // set onTouchListener for this bitmap
     private void colourOnTouch(final Bitmap bitmap) {
         ImageView imageView = (ImageView) findViewById(R.id.result);
         imageView.setImageBitmap(bitmap);
         imageView.setOnTouchListener(new View.OnTouchListener() {
-
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -226,15 +247,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // regardless of event (motion up, down, etc.) will focus screen
     private void focusOnClick() {
-        cameraView.setOnClickListener(new View.OnClickListener() {
+        cameraView.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                fotoapparatSwitcher.getCurrentFotoapparat().autoFocus();
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    default: fotoapparatSwitcher.getCurrentFotoapparat().autoFocus();
+                }
+                return true;
             }
         });
     }
 
+    // start, stop, and permissions
     @Override
     protected void onStart() {
         super.onStart();
