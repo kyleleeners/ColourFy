@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import bcscrew.colourfy.R;
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.FotoapparatSwitcher;
 import io.fotoapparat.error.CameraErrorCallback;
@@ -247,7 +248,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // regardless of event (motion up, down, etc.) will focus screen
     private void focusOnClick() {
         cameraView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -261,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // start, stop, and permissions
     @Override
     protected void onStart() {
         super.onStart();
